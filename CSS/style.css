@@ -1,0 +1,184 @@
+/*Se aplica la propiedad border-box para hacer más fácil definir el tamaño de los elementos en toda la página
+Referencia: https://developer.mozilla.org/en-US/docs/Web/CSS/box-sizing */
+*, *::after, *::before {
+	box-sizing: border-box;
+}
+
+/*Se quita el margen para todos los elementos del body*/
+body {
+	margin: 0;
+}
+
+/*Declaración de variables
+--cell-size: Tamaño de las celdas
+--cell-mark: Tamaño de las x y las o. Equivalen al 90% de las celdas*/
+:root {
+	--cell-size: 100px;
+	--cell-mark: calc(var(--cell-size) * .9);
+}
+
+/*Estilo del tablero donde están las 9 casillas.*/
+.board {
+	height: 100vh;
+	width: 100vw; 
+	display: grid; /*Las casillas se colocaran en forma de grilla*/
+	grid-template-columns: repeat(3, auto); /*Se especifica que la grilla será de 3 columnas y por lo tanto 3 filas*/
+	justify-content: center; /*Se centran todas las casillas*/
+	align-content: center;
+	justify-items: center;
+	align-items: center;
+}
+
+/*Estilo de las casillas*/
+.cuadro { 
+	width: var(--cell-size); /*Largo de las casillas*/
+	height: var(--cell-size); /*Alto de las casillas*/
+	background-color: white; /*Fondo blanco*/
+	border: 1px solid black; /*Borde de color negro*/
+	display: flex; /*Display tipo flex para que los elementos se coloquen uno al lado del otro*/
+	justify-content: center; /*Se centra el contenido*/
+	align-items: center;
+	position: relative;
+	cursor: pointer;
+}
+
+/*Si la casilla tiene alguna marca el cursos será tipo not-allowed*/
+.cuadro.x, 
+.cuadro.o {
+	cursor: not-allowed;
+}
+
+/*Se elimina el borde de arriba de las primeras tres casillas*/
+.cuadro:first-child,
+.cuadro:nth-child(2),
+.cuadro:nth-child(3) {
+	border-top: none;
+}
+
+/*Se elimina el borde de la izquierda de las casillas de lado izquierdo*/
+.cuadro:nth-child(3n + 1) {
+	border-left: none;
+}
+
+/*Se elimina el borde de la derecha de las casillas de lado derecho*/
+.cuadro:nth-child(3n + 3) {
+	border-right: none;
+}
+
+/*Se elimina el borde de abajo de las ultimas tres casillas*/
+.cuadro:nth-child(7),
+.cuadro:nth-child(8),
+.cuadro:last-child {
+	border-bottom: none;
+}
+
+/*Color de las X*/
+.cuadro.x::before,
+.cuadro.x::after {
+	background-color: black;
+}
+
+/*Dibujo de la X sombreada cuando se coloca el mouse sobre una casilla vacía*/
+.board.x .cuadro:not(.x):not(.o):hover::before,  
+.board.x .cuadro:not(.x):not(.o):hover::after {
+	background-color: lightgray;
+}
+
+/*Tamaño de la X. Se construye con el ::before y el ::after*/
+.cuadro.x::before,
+.cuadro.x::after, 
+.board.x .cuadro:not(.x):not(.o):hover::before,  
+.board.x .cuadro:not(.x):not(.o):hover::after {
+	content: "";
+	position: absolute;
+	width: calc(var(--cell-mark) * .15);
+	height: var(--cell-mark);
+}
+
+/*Rotar los ::after y ::before para formar la X*/
+.cuadro.x::before,
+.board.x .cuadro:not(.x):not(.o):hover::before {
+	transform: rotate(45deg);
+}
+
+.cuadro.x::after,
+.board.x .cuadro:not(.x):not(.o):hover::after {
+	transform: rotate(-45deg);
+}
+
+/*Color de las O por fuera*/
+.cuadro.o::before {
+	background-color: black;
+}
+
+/*Color interno de las O*/
+.cuadro.o::after, 
+.board.o .cuadro:not(.x):not(.o):hover::after {
+	background-color: white;
+}
+
+/*Dibujo de la O sombreada cuando se coloca el mouse sobre una casilla vacía*/
+.board.o .cuadro:not(.x):not(.o):hover::before {
+	background-color: lightgray;
+}
+
+/*Tamaño de la O. Se construye con el ::before y el ::after*/
+.cuadro.o::before,
+.cuadro.o::after,
+.board.o .cuadro:not(.x):not(.o):hover::before,  
+.board.o .cuadro:not(.x):not(.o):hover::after {
+	content: "";
+	position: absolute;
+	border-radius: 50%;
+}
+
+/*Tamaño del circulo externo*/
+.cuadro.o::before,
+.board.o .cuadro:not(.x):not(.o):hover::before {
+	width: var(--cell-mark);
+	height: var(--cell-mark);
+}
+
+/*Tamaño del circulo interno, 70% del circulo externo*/
+.cuadro.o::after,
+.board.o .cuadro:not(.x):not(.o):hover::after {
+	width: calc(var(--cell-mark) * 0.7);
+	height: calc(var(--cell-mark) * 0.7);
+}
+
+/*Diseño de la pantalla cuando el juego termina*/
+.mensaje-ganador {
+	display: none; 
+	position: fixed;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	background-color: rgb(0, 0, 0, 0.9);
+	justify-content: center;
+	align-items: center;
+	color: white;
+	font-size: 5rem;
+	flex-direction: column;
+}
+
+/*Diseño del botón para reiniciar el juego*/
+.mensaje-ganador button {
+	font-size: 3rem;
+	background-color: white;
+	border: 1px solid black;
+	padding: .25em .5em;
+	cursor: pointer;
+}
+
+/*Efecto del botón cuando se pasa el mouse por encima*/
+.mensaje-ganador button:hover {
+	background-color: black;
+	color: white;
+	border-color: white;
+}
+
+/*Aparece mensaje*/
+.mensaje-ganador.show {
+	display: flex;
+}
